@@ -1,11 +1,13 @@
-from django.urls import re_path
-
+from django.urls import include, path
+from rest_framework import routers
 from . import views
 
-app_name = 'test_app'
+router = routers.DefaultRouter()
+router.register(r'users', views.UserViewSet)
+router.register(r'groups', views.GroupViewSet)
 
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    re_path(r'^$', views.index, name='index'),
-    re_path(r'^([0-9]+)/$', views.detail, name='detail'),
-    re_path(r'^([0-9]+)/answer/$', views.answer, name='answer')
+    path('', include(router.urls))
 ]

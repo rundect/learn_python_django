@@ -1,25 +1,22 @@
-from django.http.response import HttpResponse
-from django.shortcuts import get_object_or_404, render
-
-from .models import Riddle, Option
-
-
-def index(request):
-    return render(request, "index.html", {"latest_riddles": Riddle.objects.order_by('-pub_date')[:5]})
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
+from rest_framework import permissions
+from .serializers import UserSerializer, GroupSerializer
 
 
-def detail(request, riddle_id):
-    return render(request, "answer.html", {"riddle": get_object_or_404(Riddle, pk=riddle_id)})
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
-def answer(request, riddle_id):
-    riddle = get_object_or_404(Riddle, pk=riddle_id)
-    try:
-        option = riddle.option_set.get(pk=request.POST['option'])
-    except (KeyError, Option.DoesNotExist):
-        return render(request, 'answer.html', {'riddle': riddle, 'error_message': 'Option does not exist'})
-    else:
-        if option.correct:
-            return render(request, "index.html", {"latest_riddles": Riddle.objects.order_by('-pub_date')[:5], "message": "Nice! Choose another one!"})
-        else:
-            return render(request, 'answer.html', {'riddle': riddle, 'error_message': 'Wrong Answer!'})
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [permissions.IsAuthenticated]
