@@ -32,6 +32,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "test_project.settings")
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # Application definition
+CELERY_BROKER_URL = 'redis://:1234@127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://:1234@127.0.0.1:6379/1'
 
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
