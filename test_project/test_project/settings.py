@@ -9,9 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 import os, django
+
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,6 +36,19 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 # Application definition
 CELERY_BROKER_URL = 'redis://:1234@127.0.0.1:6379/0'
 CELERY_RESULT_BACKEND = 'redis://:1234@127.0.0.1:6379/1'
+
+
+CELERY_BEAT_SCHEDULE = {
+    'task-first': {
+        'task': 'test_app.tasks.one',
+        'schedule': timedelta(seconds=1)
+    },
+    'task-second': {
+        'task': 'test_app.tasks.two',
+        'schedule': crontab(minute='0', hour='*/3,10-19')
+    }
+}
+
 
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
